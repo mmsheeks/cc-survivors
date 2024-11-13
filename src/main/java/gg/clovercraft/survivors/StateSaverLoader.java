@@ -21,6 +21,7 @@ public class StateSaverLoader extends PersistentState {
         players.forEach((uuid, playerData) -> {
             NbtCompound playerNbt = new NbtCompound();
             playerNbt.putInt("lives", playerData.lives);
+            playerNbt.putString("lifeGiveTimestamp", playerData.lifeGiveTimestamp);
             playersNbt.put(uuid.toString(), playerNbt);
         });
         nbt.put("players", playersNbt);
@@ -33,6 +34,7 @@ public class StateSaverLoader extends PersistentState {
         playersNbt.getKeys().forEach(key -> {
             PlayerData playerData = new PlayerData();
             playerData.lives = playersNbt.getCompound(key).getInt("lives");
+            playerData.lifeGiveTimestamp = playersNbt.getCompound(key).getString("lifeGiveTimestamp");
             UUID uuid = UUID.fromString(key);
             state.players.put(uuid, playerData);
         });

@@ -40,30 +40,9 @@ public class Survivors implements ModInitializer {
 
         ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
             if (entity instanceof PlayerEntity) {
-                PlayerData playerState = StateSaverLoader.getPlayerState(entity);
-                playerState.lives -= 1;
-                Scoreboards.updatePlayerTeam((PlayerEntity) entity, playerState);
-
-                if (playerState.lives == 0) {
-                    setPlayerDead(entity);
-                } else {
-                    ServerPlayerEntity player = (ServerPlayerEntity)entity;
-                    String message = "You have died! You have %s lives remaining.".formatted(playerState.lives);
-                    if (playerState.lives == 1 ) {
-                        message = "You have died! You have 1 life remaining.";
-                    }
-                    player.sendMessage(Text.literal(message));
-                }
+                DeathHandler.onPlayerDeath(entity, source);
             }
         });
-    }
-
-    public void setPlayerDead(LivingEntity entity) {
-        MinecraftServer server = entity.getServer();
-        UUID uuid = entity.getUuid();
-        ServerPlayerEntity player = server.getPlayerManager().getPlayer(uuid);
-        player.changeGameMode(GameMode.SPECTATOR);
-        player.sendMessage(Text.literal("You have died for the last time. Your run has ended."));
     }
 
 

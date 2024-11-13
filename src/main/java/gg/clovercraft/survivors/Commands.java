@@ -87,6 +87,12 @@ public class Commands {
                             PlayerData playerState = StateSaverLoader.getPlayerState(player);
                             PlayerData targetState = StateSaverLoader.getPlayerState(target);
 
+                            // check ability to cast
+                            if (!playerState.canGiveLife()) {
+                                context.getSource().sendFeedback(() -> Text.literal("You have already sent a life today. You must wait for next session."), false);
+                                return 1;
+                            }
+
                             if (playerState.lives <= 1) {
                                 context.getSource().sendFeedback(() -> Text.literal("You cannot give away your last life."), false);
                                 return 1;
@@ -99,6 +105,7 @@ public class Commands {
 
                             // all checks pass. adjust lives and inform the players
                             playerState.subLife();
+                            playerState.flagGiveLife();
                             Scoreboards.updatePlayerTeam(player, playerState);
                             targetState.addLife();
                             Scoreboards.updatePlayerTeam(target, targetState);
