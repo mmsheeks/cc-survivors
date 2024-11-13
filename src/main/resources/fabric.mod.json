@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "survivors",
+  "version": "${version}",
+  "name": "survivors",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "MPL-2.0",
+  "icon": "assets/survivors/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "gg.clovercraft.survivors.client.SurvivorsClient"
+    ],
+    "main": [
+      "gg.clovercraft.survivors.Survivors"
+    ]
+  },
+  "mixins": [
+    "survivors.mixins.json",
+    {
+      "config": "survivors.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
