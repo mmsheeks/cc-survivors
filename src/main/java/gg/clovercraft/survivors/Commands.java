@@ -14,37 +14,39 @@ import net.minecraft.text.Text;
 
 public class Commands {
 
-    private CommandDispatcher dispatcher;
-    private CommandRegistryAccess access;
-    private CommandManager.RegistrationEnvironment environment;
+    private final CommandDispatcher<ServerCommandSource> dispatcher;
+    private final CommandRegistryAccess access;
+    private final CommandManager.RegistrationEnvironment environment;
 
-    public static void registerAll(CommandDispatcher dispatcher, CommandRegistryAccess access, CommandManager.RegistrationEnvironment environment) {
-        Commands commands = new Commands(dispatcher, access, environment);
-        commands.lives();
-        commands.set_lives();
-        commands.give_life();
-    }
-
-    public Commands(CommandDispatcher dispatcher, CommandRegistryAccess registryAccess, CommandManager.RegistrationEnvironment environment ) {
+    public Commands(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess, CommandManager.RegistrationEnvironment environment ) {
         this.dispatcher = dispatcher;
         this.access = registryAccess;
         this.environment = environment;
+    }
+
+    public void registerAll() {
+        lives();
+        set_lives();
+        give_life();
     }
 
     public void lives() {
         dispatcher.register(CommandManager.literal("lives")
                 .executes(context -> {
                     ServerCommandSource source = context.getSource();
-                    if( source.isExecutedByPlayer() == false ) {
+                    if(source.isExecutedByPlayer()) {
+                        ServerPlayerEntity player = source.getPlayer();
+                        if (player == null) {
+                            context.getSource().sendFeedback(() -> Text.literal("Failed to determine player"), false);
+                            return 0;
+                        }
+                        PlayerData playerState = StateSaverLoader.getPlayerState(player);
+                        int lives = playerState.lives;
+
+                        context.getSource().sendFeedback(() -> Text.literal("You have %s lives remaining.".formatted(lives)), false);
+                    } else {
                         context.getSource().sendFeedback(() -> Text.literal("you are not a player."), false);
-                        return 1;
                     }
-
-                    ServerPlayerEntity player = source.getPlayer();
-                    PlayerData playerState = StateSaverLoader.getPlayerState(player);
-                    int lives = playerState.lives;
-
-                    context.getSource().sendFeedback(() -> Text.literal("You have %s lives remaining.".formatted(lives)), false);
                     return 1;
                 }));
     }
@@ -61,6 +63,10 @@ public class Commands {
 
                             // get selected player state
                             PlayerEntity player = getPlayer(context);
+                            if (player == null) {
+                                context.getSource().sendFeedback(() -> Text.literal("Failed to determine player"), false);
+                                return 0;
+                            }
                             PlayerData playerState = StateSaverLoader.getPlayerState(player);
 
                             // set lives
@@ -81,7 +87,15 @@ public class Commands {
                         .executes(context -> {
                             // get targeted player
                             PlayerEntity target = getPlayer(context);
+                            if (target == null) {
+                                context.getSource().sendFeedback(() -> Text.literal("Failed to determine player"), false);
+                                return 0;
+                            }
                             PlayerEntity player = context.getSource().getPlayer();
+                            if (player == null) {
+                                context.getSource().sendFeedback(() -> Text.literal("Failed to determine player"), false);
+                                return 0;
+                            }
 
                             // get player states
                             PlayerData playerState = StateSaverLoader.getPlayerState(player);

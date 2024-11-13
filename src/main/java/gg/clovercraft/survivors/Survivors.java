@@ -19,7 +19,10 @@ public class Survivors implements ModInitializer {
     public void onInitialize() {
 
         LOGGER.info("setting up server commands");
-        CommandRegistrationCallback.EVENT.register(Commands::registerAll);
+        CommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess, registrationEnvironment) -> {
+            Commands commands = new Commands(commandDispatcher, commandRegistryAccess, registrationEnvironment);
+            commands.registerAll();
+        }));
 
         LOGGER.info("setting up scoreboards");
         ServerLifecycleEvents.SERVER_STARTED.register(Scoreboards::register);
