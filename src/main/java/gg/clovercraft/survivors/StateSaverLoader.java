@@ -13,8 +13,6 @@ import java.util.UUID;
 
 public class StateSaverLoader extends PersistentState {
 
-    public Integer lives = 5;
-
     public HashMap<UUID, PlayerData> players = new HashMap<>();
 
     @Override

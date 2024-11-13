@@ -1,12 +1,8 @@
 package gg.clovercraft.survivors;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.scoreboard.ScoreboardCriterion;
 import net.minecraft.scoreboard.ServerScoreboard;
-import net.minecraft.scoreboard.number.NumberFormat;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class Scoreboards {
@@ -19,7 +15,14 @@ public class Scoreboards {
     }
 
     public static void updatePlayerTeam(PlayerEntity player, PlayerData state) {
-        ServerScoreboard scoreboard = player.getServer().getScoreboard();
+        ServerScoreboard scoreboard;
+
+        try {
+            scoreboard = player.getServer().getScoreboard();
+        } catch (NullPointerException e) {
+            Survivors.LOGGER.error("Failed to retrieve server scoreboard! This should never happen.");
+            return;
+        }
         switch(state.lives) {
             case 5:
             case 4:
