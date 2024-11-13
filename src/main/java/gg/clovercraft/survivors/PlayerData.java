@@ -1,7 +1,5 @@
 package gg.clovercraft.survivors;
 
-import net.minecraft.entity.player.PlayerEntity;
-
 import java.text.ParseException;
 import java.util.Date;
 import java.text.SimpleDateFormat;
@@ -49,8 +47,7 @@ public class PlayerData {
     public void flagGiveLife() {
         Date now = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        String timestamp = formatter.format(now);
-        lifeGiveTimestamp = timestamp;
+        lifeGiveTimestamp = formatter.format(now);
     }
 
     public void setLives(int lives) {
