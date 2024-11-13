@@ -4,19 +4,15 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.world.GameMode;
 
-import java.util.Objects;
-import java.util.UUID;
-
 public class DeathHandler {
 
-    private DamageSource source;
-    private PlayerEntity player;
-    private PlayerData state;
+    private final DamageSource source;
+    private final PlayerEntity player;
+    private final PlayerData state;
 
     public static void onPlayerDeath(LivingEntity entity, DamageSource source) {
         PlayerEntity player = (PlayerEntity) entity;

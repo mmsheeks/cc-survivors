@@ -5,6 +5,8 @@ import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Formatting;
 
+import java.util.Objects;
+
 public class Scoreboards {
 
     MinecraftServer server;
@@ -18,7 +20,7 @@ public class Scoreboards {
         ServerScoreboard scoreboard;
 
         try {
-            scoreboard = player.getServer().getScoreboard();
+            scoreboard = Objects.requireNonNull(player.getServer()).getScoreboard();
         } catch (NullPointerException e) {
             Survivors.LOGGER.error("Failed to retrieve server scoreboard! This should never happen.");
             return;
