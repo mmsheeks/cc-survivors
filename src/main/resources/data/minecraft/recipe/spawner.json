@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": "minecraft:iron_ingot",
+    "@": "minecraft:diamond",
+    "A": "minecraft:bone",
+    "B": "minecraft:rotten_flesh"
+  },
+  "pattern": [
+    "#B#",
+    "A@A",
+    "###"
+  ],
+  "result": {
+    "id": "minecraft:spawner",
+    "count": 1
+  }
+}

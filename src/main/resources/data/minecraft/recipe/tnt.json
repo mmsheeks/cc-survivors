@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": "minecraft:gunpowder",
+    "@": "minecraft:paper"
+  },
+  "pattern": [
+    "#@#",
+    "@#@",
+    "#@#"
+  ],
+  "result": {
+    "id": "minecraft:tnt",
+    "count": 1
+  }
+}
