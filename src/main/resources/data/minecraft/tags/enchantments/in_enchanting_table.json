@@ -1,0 +1,20 @@
+{
+  "values": [
+    "minecraft:breach",
+    "minecraft:efficiency",
+    "minecraft:feather_falling",
+    "minecraft:flame",
+    "minecraft:fortune",
+    "minecraft:looting",
+    "minecraft:luck_of_the_sea",
+    "minecraft:lure",
+    "minecraft:power",
+    "minecraft:punch",
+    "minecraft:protection",
+    "minecraft:respiration",
+    "minecraft:sharpness",
+    "minecraft:silk_touch",
+    "minecraft:unbreaking",
+    "minecraft:mending"
+  ]
+}
