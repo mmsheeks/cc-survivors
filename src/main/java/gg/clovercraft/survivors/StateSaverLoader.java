@@ -41,7 +41,7 @@ public class StateSaverLoader extends PersistentState {
         return state;
     }
 
-    private static Type<StateSaverLoader> type = new Type<>(
+    private static final Type<StateSaverLoader> type = new Type<>(
             StateSaverLoader::new,
             StateSaverLoader::createFromNbt,
             null
