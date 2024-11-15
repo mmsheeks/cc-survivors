@@ -13,7 +13,6 @@ public class PlayerData {
     public int livesLost = 0;
     public int livesGained = 0;
     public String lifeGiveTimestamp = "";
-    public HashMap<UUID, String> playersKilled = new HashMap<>();
 
 
     public NbtCompound toNbt() {
@@ -23,15 +22,6 @@ public class PlayerData {
         nbt.putInt("livesLost",livesLost);
         nbt.putInt("livesGained",livesGained);
         nbt.putString("lifeGiveTimestamp", lifeGiveTimestamp);
-
-        NbtCompound killList = new NbtCompound();
-        playersKilled.forEach((uuid, name) -> {
-            NbtCompound playerNbt = new NbtCompound();
-            String key = uuid.toString();
-            playerNbt.putString("name", name);
-            killList.put(key, playerNbt);
-        });
-        nbt.put("killList", killList);
 
         return nbt;
     }
@@ -44,22 +34,20 @@ public class PlayerData {
         state.livesGained = nbt.getInt("livesGained");
         state.lifeGiveTimestamp = nbt.getString("lifeGiveTimestamp");
 
-        nbt.getCompound("killList").getKeys().forEach(key -> {
-            NbtCompound playerNbt = nbt.getCompound("killList").getCompound(key);
-            UUID uuid = UUID.fromString(key);
-            String name = playerNbt.getString("name");
-            state.playersKilled.put(uuid, name);
-        });
-
         return state;
     }
 
-    public void addLife() {
+    public void addLife(boolean isKill) {
         lives += 1;
+        livesGained += 1;
+        if (isKill) {
+            killCount += 1;
+        }
     }
 
     public void subLife() {
         lives -= 1;
+        livesLost += 1;
     }
 
     public boolean canGiveLife() {
