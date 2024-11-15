@@ -15,13 +15,23 @@ public class PlayerData {
     public String lifeGiveTimestamp = "";
     public HashMap<UUID, String> playersKilled = new HashMap<>();
 
-    public HashMap<UUID, PlayerData> players = new HashMap<>();
-
 
     public NbtCompound toNbt() {
         NbtCompound nbt = new NbtCompound();
         nbt.putInt("lives", lives);
+        nbt.putInt("killCount", killCount);
+        nbt.putInt("livesLost",livesLost);
+        nbt.putInt("livesGained",livesGained);
         nbt.putString("lifeGiveTimestamp", lifeGiveTimestamp);
+
+        NbtCompound killList = new NbtCompound();
+        playersKilled.forEach((uuid, name) -> {
+            NbtCompound playerNbt = new NbtCompound();
+            String key = uuid.toString();
+            playerNbt.putString("name", name);
+            killList.put(key, playerNbt);
+        });
+        nbt.put("killList", killList);
 
         return nbt;
     }
@@ -29,7 +39,17 @@ public class PlayerData {
     public static PlayerData fromNbt(NbtCompound nbt) {
         PlayerData state = new PlayerData();
         state.lives = nbt.getInt("lives");
+        state.killCount = nbt.getInt("killCount");
+        state.livesLost = nbt.getInt("livesLost");
+        state.livesGained = nbt.getInt("livesGained");
         state.lifeGiveTimestamp = nbt.getString("lifeGiveTimestamp");
+
+        nbt.getCompound("killList").getKeys().forEach(key -> {
+            NbtCompound playerNbt = nbt.getCompound("killList").getCompound(key);
+            UUID uuid = UUID.fromString(key);
+            String name = playerNbt.getString("name");
+            state.playersKilled.put(uuid, name);
+        });
 
         return state;
     }
