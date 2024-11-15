@@ -1,25 +1,53 @@
 package gg.clovercraft.survivors;
 
+import net.minecraft.nbt.NbtCompound;
+
 import java.text.ParseException;
-import java.util.Date;
+import java.util.*;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class PlayerData {
     public int lives = 5;
+    public int killCount = 0;
+    public int livesLost = 0;
+    public int livesGained = 0;
     public String lifeGiveTimestamp = "";
 
-    public HashMap<UUID, PlayerData> players = new HashMap<>();
 
-    public void addLife() {
+    public NbtCompound toNbt() {
+        NbtCompound nbt = new NbtCompound();
+        nbt.putInt("lives", lives);
+        nbt.putInt("killCount", killCount);
+        nbt.putInt("livesLost",livesLost);
+        nbt.putInt("livesGained",livesGained);
+        nbt.putString("lifeGiveTimestamp", lifeGiveTimestamp);
+
+        return nbt;
+    }
+
+    public static PlayerData fromNbt(NbtCompound nbt) {
+        PlayerData state = new PlayerData();
+        state.lives = nbt.getInt("lives");
+        state.killCount = nbt.getInt("killCount");
+        state.livesLost = nbt.getInt("livesLost");
+        state.livesGained = nbt.getInt("livesGained");
+        state.lifeGiveTimestamp = nbt.getString("lifeGiveTimestamp");
+
+        return state;
+    }
+
+    public void addLife(boolean isKill) {
         lives += 1;
+        livesGained += 1;
+        if (isKill) {
+            killCount += 1;
+        }
     }
 
     public void subLife() {
         lives -= 1;
+        livesLost += 1;
     }
 
     public boolean canGiveLife() {

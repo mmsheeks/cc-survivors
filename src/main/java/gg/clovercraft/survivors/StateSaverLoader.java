@@ -14,16 +14,16 @@ import java.util.UUID;
 public class StateSaverLoader extends PersistentState {
 
     public HashMap<UUID, PlayerData> players = new HashMap<>();
+    public int totalPlayersKilled = 0;
 
     @Override
     public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registries) {
+        // write basic data
+        nbt.putInt("totalPlayersKilled", totalPlayersKilled);
+
+        // write player data
         NbtCompound playersNbt = new NbtCompound();
-        players.forEach((uuid, playerData) -> {
-            NbtCompound playerNbt = new NbtCompound();
-            playerNbt.putInt("lives", playerData.lives);
-            playerNbt.putString("lifeGiveTimestamp", playerData.lifeGiveTimestamp);
-            playersNbt.put(uuid.toString(), playerNbt);
-        });
+        players.forEach((uuid, playerData) -> playersNbt.put(uuid.toString(), playerData.toNbt()));
         nbt.put("players", playersNbt);
         return nbt;
     }
@@ -32,9 +32,7 @@ public class StateSaverLoader extends PersistentState {
         StateSaverLoader state = new StateSaverLoader();
         NbtCompound playersNbt = tag.getCompound("players");
         playersNbt.getKeys().forEach(key -> {
-            PlayerData playerData = new PlayerData();
-            playerData.lives = playersNbt.getCompound(key).getInt("lives");
-            playerData.lifeGiveTimestamp = playersNbt.getCompound(key).getString("lifeGiveTimestamp");
+            PlayerData playerData = PlayerData.fromNbt(playersNbt.getCompound(key));
             UUID uuid = UUID.fromString(key);
             state.players.put(uuid, playerData);
         });
@@ -56,7 +54,6 @@ public class StateSaverLoader extends PersistentState {
 
     public static PlayerData getPlayerState(LivingEntity player) {
         StateSaverLoader serverState = getServerState(player.getWorld().getServer());
-        PlayerData playerState = serverState.players.computeIfAbsent(player.getUuid(), uuid -> new PlayerData());
-        return playerState;
+        return serverState.players.computeIfAbsent(player.getUuid(), uuid -> new PlayerData());
     }
 }

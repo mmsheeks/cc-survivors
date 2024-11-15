@@ -121,7 +121,7 @@ public class Commands {
                             playerState.subLife();
                             playerState.flagGiveLife();
                             Scoreboards.updatePlayerTeam(player, playerState);
-                            targetState.addLife();
+                            targetState.addLife(false);
                             Scoreboards.updatePlayerTeam(target, targetState);
 
                             context.getSource().sendFeedback(() -> Text.literal("Gave one life to %s".formatted(target.getDisplayName().toString())), false);

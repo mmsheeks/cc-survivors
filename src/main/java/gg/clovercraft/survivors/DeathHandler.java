@@ -67,7 +67,7 @@ public class DeathHandler {
         PlayerData killerState = StateSaverLoader.getPlayerState(killer);
 
         if(killerState.lives == 2 && this.state.lives >= 4 ) {
-            killerState.addLife();
+            killerState.addLife(true);
             Scoreboards.updatePlayerTeam(killer, killerState);
             ServerPlayerEntity serverPlayer = (ServerPlayerEntity) killer;
             serverPlayer.sendMessage(Text.literal("Congratulations. You have restored one life. You are green once more."));
@@ -75,7 +75,7 @@ public class DeathHandler {
         }
 
         if(killerState.lives == 1) {
-            killerState.addLife();
+            killerState.addLife(true);
             Scoreboards.updatePlayerTeam(killer, killerState);
             ServerPlayerEntity serverPlayer = (ServerPlayerEntity) killer;
             serverPlayer.sendMessage(Text.literal("Congratulations. You have restored one life and are once more Yellow. You may now only target dark green lives."));
