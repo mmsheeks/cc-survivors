@@ -1,18 +1,38 @@
 package gg.clovercraft.survivors;
 
+import net.minecraft.nbt.NbtCompound;
+
 import java.text.ParseException;
-import java.util.Date;
+import java.util.*;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class PlayerData {
     public int lives = 5;
+    public int killCount = 0;
+    public int livesLost = 0;
+    public int livesGained = 0;
     public String lifeGiveTimestamp = "";
+    public HashMap<UUID, String> playersKilled = new HashMap<>();
 
     public HashMap<UUID, PlayerData> players = new HashMap<>();
+
+
+    public NbtCompound toNbt() {
+        NbtCompound nbt = new NbtCompound();
+        nbt.putInt("lives", lives);
+        nbt.putString("lifeGiveTimestamp", lifeGiveTimestamp);
+
+        return nbt;
+    }
+
+    public static PlayerData fromNbt(NbtCompound nbt) {
+        PlayerData state = new PlayerData();
+        state.lives = nbt.getInt("lives");
+        state.lifeGiveTimestamp = nbt.getString("lifeGiveTimestamp");
+
+        return state;
+    }
 
     public void addLife() {
         lives += 1;
