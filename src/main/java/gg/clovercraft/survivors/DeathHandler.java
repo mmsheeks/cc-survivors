@@ -26,6 +26,16 @@ public class DeathHandler {
         this.state = StateSaverLoader.getPlayerState(player);
     }
 
+    public static void afterDeath(PlayerEntity player) {
+        PlayerData state = StateSaverLoader.getPlayerState(player);
+        switch(state.lives) {
+            case 2:
+                SurvivorsAdvancements.grantAdvancement(player, SurvivorsAdvancements.GETTING_RISKY);
+            case 1:
+                SurvivorsAdvancements.grantAdvancement(player, SurvivorsAdvancements.DEATHS_KISS);
+        }
+    }
+
     public void onDeath() {
         // check if they were killed by another player
         Entity attacker = source.getAttacker();
@@ -37,15 +47,10 @@ public class DeathHandler {
         this.state.lives -= 1;
         Scoreboards.updatePlayerTeam(this.player, this.state);
 
-        switch(this.state.lives) {
-            case 2:
-                SurvivorsAdvancements.grantAdvancement(this.player, SurvivorsAdvancements.GETTING_RISKY);
-            case 1:
-                SurvivorsAdvancements.grantAdvancement(this.player, SurvivorsAdvancements.DEATHS_KISS);
-            case 0:
-                endRun();
-            default:
-                sendDeathMessage();
+        if ( this.state.lives == 0 ) {
+            endRun();
+        } else {
+            sendDeathMessage();
         }
     }
 

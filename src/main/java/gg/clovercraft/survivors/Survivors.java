@@ -3,9 +3,11 @@ package gg.clovercraft.survivors;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.ServerAdvancementLoader;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -30,6 +32,7 @@ public class Survivors implements ModInitializer {
 
         LOGGER.info("setting up scoreboards");
         ServerLifecycleEvents.SERVER_STARTED.register(Scoreboards::register);
+        ServerLifecycleEvents.SERVER_STARTED.register(SurvivorsAdvancements::register);
 
         LOGGER.info("Setting up player events");
         // on join event
@@ -42,6 +45,12 @@ public class Survivors implements ModInitializer {
         ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
             if (entity instanceof PlayerEntity) {
                 DeathHandler.onPlayerDeath(entity, source);
+            }
+        });
+
+        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
+            if (!alive) {
+                DeathHandler.afterDeath(newPlayer);
             }
         });
 

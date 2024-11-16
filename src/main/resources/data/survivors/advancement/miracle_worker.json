@@ -1,5 +1,15 @@
 {
-  "parent": "survivors:root",
+  "parent": "survivors:healing_gift",
+  "display": {
+    "icon": {
+      "id": "minecraft:potion"
+    },
+    "title": "Miracle Worker",
+    "description": "Be gifted a life",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
   "criteria": {
     "requirement": {
       "trigger": "minecraft:tick",
@@ -9,7 +19,7 @@
             "condition": "minecraft:entity_scores",
             "entity":"this",
             "scores": {
-              "survivors_adv_getting_risky": {
+              "survivors_adv_miracle_worker": {
                 "min": 1
               }
             }
@@ -17,16 +27,6 @@
         ]
       }
     }
-  },
-  "display": {
-    "icon": {
-      "id": "minecraft:wither_skeleton_skull"
-    },
-    "title": "Getting Risky",
-    "description": "Reach yellow life status",
-    "frame": "task",
-    "show_toast": true,
-    "announce_to_chat": true
   },
   "sends_telemetry_event": true
 }

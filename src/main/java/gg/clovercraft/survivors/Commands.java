@@ -120,8 +120,10 @@ public class Commands {
                             // all checks pass. adjust lives and inform the players
                             playerState.subLife();
                             playerState.flagGiveLife();
+                            SurvivorsAdvancements.grantAdvancement(player, SurvivorsAdvancements.MIRACLE_WORKER);
                             Scoreboards.updatePlayerTeam(player, playerState);
                             targetState.addLife(false);
+                            SurvivorsAdvancements.grantAdvancement(player, SurvivorsAdvancements.HEALING_GIFT);
                             Scoreboards.updatePlayerTeam(target, targetState);
 
                             context.getSource().sendFeedback(() -> Text.literal("Gave one life to %s".formatted(target.getDisplayName().toString())), false);
