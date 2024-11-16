@@ -52,25 +52,27 @@ public class SurvivorsAdvancements {
         if (killed > 1) {
             // at least one player has been eliminated
             int remaining = total - killed;
-            switch(remaining){
-                case finalistCount:
-                    // exactly three players remain. grant finalist advancement
-                    state.players.forEach((uuid, data) -> {
-                       if (data.lives > 0 ) {
-                           PlayerEntity player = server.getPlayerManager().getPlayer(uuid);
-                           assert player != null;
-                           SurvivorsAdvancements.grantAdvancement(player, FINALIST);
-                       }
-                    });
-                case victorCount:
-                    // last player alive gets the victor advancement
-                    state.players.forEach((uuid, data) -> {
-                        if (data.lives > 0 ) {
-                            PlayerEntity player = server.getPlayerManager().getPlayer(uuid);
-                            assert player != null;
-                            SurvivorsAdvancements.grantAdvancement(player, VICTOR);
-                        }
-                    });
+
+            if (remaining <= finalistCount) {
+                // three or fewer players remain. grant finalist advancement
+                state.players.forEach((uuid, data) -> {
+                    if (data.lives > 0 ) {
+                        PlayerEntity player = server.getPlayerManager().getPlayer(uuid);
+                        assert player != null;
+                        SurvivorsAdvancements.grantAdvancement(player, FINALIST);
+                    }
+                });
+            }
+
+            if (remaining == victorCount) {
+                // last player alive gets the victor advancement
+                state.players.forEach((uuid, data) -> {
+                    if (data.lives > 0 ) {
+                        PlayerEntity player = server.getPlayerManager().getPlayer(uuid);
+                        assert player != null;
+                        SurvivorsAdvancements.grantAdvancement(player, VICTOR);
+                    }
+                });
             }
         }
     }
