@@ -36,7 +36,7 @@ public class SurvivorsAdvancements {
         objectives.forEach(objective -> {
             if(objective.getName().equals(advancement)) {
                 ScoreAccess score = player.getScoreboard().getOrCreateScore(ScoreHolder.fromName(player.getNameForScoreboard()), objective);
-                score.incrementScore();
+                score.setScore(1);
             }
         });
     }
