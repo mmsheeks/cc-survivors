@@ -58,7 +58,6 @@ public class Commands {
                         .then(CommandManager.argument("lives", IntegerArgumentType.integer())
                         .executes(context -> {
                             // parse args
-                            String playerName = StringArgumentType.getString(context, "player");
                             int lives = IntegerArgumentType.getInteger(context, "lives");
 
                             // get selected player state
@@ -76,7 +75,7 @@ public class Commands {
                             playerState.setLives(lives);
                             Scoreboards.updatePlayerTeam(player, playerState);
 
-                            context.getSource().sendFeedback(() -> Text.literal("Set %s lives to %s".formatted(player.getDisplayName().getString(), playerState.lives)), true);
+                            context.getSource().sendFeedback(() -> Text.literal("Set %s lives to %s".formatted(getDisplayName(player), playerState.lives)), true);
                             return 1;
                         }))));
     }
@@ -113,18 +112,20 @@ public class Commands {
                             }
 
                             if (targetState.lives == Survivors.MAX_LIVES) {
-                                context.getSource().sendFeedback(() -> Text.literal("%s already has the maximum number of lives.".formatted(target.getDisplayName().toString())), false);
+                                context.getSource().sendFeedback(() -> Text.literal("%s already has the maximum number of lives.".formatted(getDisplayName(target))), false);
                                 return 1;
                             }
 
                             // all checks pass. adjust lives and inform the players
                             playerState.subLife();
                             playerState.flagGiveLife();
+                            SurvivorsAdvancements.grantAdvancement(player, SurvivorsAdvancements.MIRACLE_WORKER);
                             Scoreboards.updatePlayerTeam(player, playerState);
                             targetState.addLife(false);
+                            SurvivorsAdvancements.grantAdvancement(player, SurvivorsAdvancements.HEALING_GIFT);
                             Scoreboards.updatePlayerTeam(target, targetState);
 
-                            context.getSource().sendFeedback(() -> Text.literal("Gave one life to %s".formatted(target.getDisplayName().toString())), false);
+                            context.getSource().sendFeedback(() -> Text.literal("Gave one life to %s".formatted(getDisplayName(target))), false);
                             return 1;
                         })));
     }
@@ -139,5 +140,14 @@ public class Commands {
             return null;
         }
         return player;
+    }
+
+    private String getDisplayName(PlayerEntity player) {
+        String name = "";
+        Text display = player.getDisplayName();
+        if (display != null) {
+            name = display.toString();
+        }
+        return name;
     }
 }

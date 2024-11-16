@@ -1,0 +1,33 @@
+{
+  "parent": "survivors:root",
+  "display": {
+    "icon": {
+      "id": "minecraft:netherite_sword"
+    },
+    "title": "First Blood",
+    "description": "Be the first to take a life",
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:tick",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_scores",
+            "entity":"this",
+            "scores": {
+              "survivors_adv_first_blood": {
+                "min": 1
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "sends_telemetry_event": true
+}

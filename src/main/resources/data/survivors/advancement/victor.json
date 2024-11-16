@@ -1,0 +1,32 @@
+{
+  "parent": "survivors:finalist",
+  "display": {
+    "icon": {
+      "id": "minecraft:totem_of_undying"
+    },
+    "title": "Victor",
+    "description": "Become Imortal",
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:tick",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_scores",
+            "entity":"this",
+            "scores": {
+              "survivors_adv_victor": {
+                "min": 1
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "sends_telemetry_event": true
+}

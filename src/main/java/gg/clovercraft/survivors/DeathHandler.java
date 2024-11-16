@@ -8,11 +8,14 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.world.GameMode;
 
+import java.util.Objects;
+
 public class DeathHandler {
 
     private final DamageSource source;
     private final PlayerEntity player;
     private final PlayerData state;
+    private final StateSaverLoader serverState;
 
     public static void onPlayerDeath(LivingEntity entity, DamageSource source) {
         PlayerEntity player = (PlayerEntity) entity;
@@ -24,6 +27,17 @@ public class DeathHandler {
         this.player = player;
         this.source = source;
         this.state = StateSaverLoader.getPlayerState(player);
+        this.serverState = StateSaverLoader.getServerState(Objects.requireNonNull(player.getServer()));
+    }
+
+    public static void afterDeath(PlayerEntity player) {
+        PlayerData state = StateSaverLoader.getPlayerState(player);
+        switch(state.lives) {
+            case 2:
+                SurvivorsAdvancements.grantAdvancement(player, SurvivorsAdvancements.GETTING_RISKY);
+            case 1:
+                SurvivorsAdvancements.grantAdvancement(player, SurvivorsAdvancements.DEATHS_KISS);
+        }
     }
 
     public void onDeath() {
@@ -37,11 +51,12 @@ public class DeathHandler {
         this.state.lives -= 1;
         Scoreboards.updatePlayerTeam(this.player, this.state);
 
-        if (this.state.lives == 0) {
+        if ( this.state.lives == 0 ) {
             endRun();
         } else {
             sendDeathMessage();
         }
+        SurvivorsAdvancements.checkGlobals(this.player.getServer());
     }
 
     private void sendDeathMessage() {
@@ -60,13 +75,20 @@ public class DeathHandler {
         ServerPlayerEntity player = (ServerPlayerEntity)this.player;
         player.changeGameMode(GameMode.SPECTATOR);
         player.sendMessage(Text.literal("You have died for the last time. Your run has ended."));
+        serverState.playersEliminated += 1;
     }
 
     private void handleKiller( Entity attacker ) {
         PlayerEntity killer = (PlayerEntity) attacker;
         PlayerData killerState = StateSaverLoader.getPlayerState(killer);
 
+        this.serverState.totalPlayersKilled += 1;
+        if ( this.serverState.totalPlayersKilled == 1 ) {
+            SurvivorsAdvancements.grantAdvancement(killer, SurvivorsAdvancements.FIRST_BLOOD);
+        }
+
         if(killerState.lives == 2 && this.state.lives >= 4 ) {
+            SurvivorsAdvancements.grantAdvancement(killer, SurvivorsAdvancements.LIFESTEAL);
             killerState.addLife(true);
             Scoreboards.updatePlayerTeam(killer, killerState);
             ServerPlayerEntity serverPlayer = (ServerPlayerEntity) killer;
@@ -75,10 +97,15 @@ public class DeathHandler {
         }
 
         if(killerState.lives == 1) {
+            SurvivorsAdvancements.grantAdvancement(killer, SurvivorsAdvancements.LIFESTEAL);
             killerState.addLife(true);
             Scoreboards.updatePlayerTeam(killer, killerState);
             ServerPlayerEntity serverPlayer = (ServerPlayerEntity) killer;
             serverPlayer.sendMessage(Text.literal("Congratulations. You have restored one life and are once more Yellow. You may now only target dark green lives."));
+        }
+
+        if (killerState.killCount == 5 ) {
+            SurvivorsAdvancements.grantAdvancement(killer, SurvivorsAdvancements.KILLSTREAK);
         }
     }
 }
