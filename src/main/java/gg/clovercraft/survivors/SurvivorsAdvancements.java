@@ -17,6 +17,7 @@ public class SurvivorsAdvancements {
     public static final String HEALING_GIFT = "survivors_adv_healing_gift";
     public static final String MIRACLE_WORKER = "survivors_adv_miracle_worker";
     public static final String FIRST_BLOOD = "survivors_adv_first_blood";
+    public static final String KILLSTREAK = "survivors_adv_killstreak";
 
     public MinecraftServer server;
     public Scoreboard scoreboard;
@@ -24,6 +25,24 @@ public class SurvivorsAdvancements {
     public static void register(MinecraftServer minecraftServer) {
         SurvivorsAdvancements advancements = new SurvivorsAdvancements(minecraftServer);
         advancements.loadScores();
+    }
+
+    public static void grantAdvancement(PlayerEntity player, String advancement) {
+        MinecraftServer server = player.getServer();
+        assert server != null;
+        Collection<ScoreboardObjective> objectives = server.getScoreboard().getObjectives();
+        objectives.forEach(objective -> {
+            if(objective.getName().equals(advancement)) {
+                ScoreAccess score = player.getScoreboard().getOrCreateScore(ScoreHolder.fromName(player.getNameForScoreboard()), objective);
+                score.incrementScore();
+            }
+        });
+    }
+
+    public static void checkGlobals(MinecraftServer server) {
+        SurvivorsAdvancements advancements = new SurvivorsAdvancements(server);
+        StateSaverLoader state = StateSaverLoader.getServerState(server);
+        // @todo: need to build a way to calculate finalists and victor
     }
 
     public SurvivorsAdvancements(MinecraftServer server) {
@@ -41,6 +60,7 @@ public class SurvivorsAdvancements {
         addScore(HEALING_GIFT, "Healing Gift");
         addScore(MIRACLE_WORKER, "Miracle Worker");
         addScore(FIRST_BLOOD, "First Blood");
+        addScore(KILLSTREAK, "Kill Streak");
     }
 
     public void addScore(String score, String display) {
@@ -56,17 +76,5 @@ public class SurvivorsAdvancements {
         if (!scoreExists.get()) {
             scoreboard.addObjective(score, ScoreboardCriterion.TRIGGER, Text.literal(display), RenderType.INTEGER, false, null);
         }
-    }
-
-    public static void grantAdvancement(PlayerEntity player, String advancement) {
-        MinecraftServer server = player.getServer();
-        assert server != null;
-        Collection<ScoreboardObjective> objectives = server.getScoreboard().getObjectives();
-        objectives.forEach(objective -> {
-            if(objective.getName().equals(advancement)) {
-                ScoreAccess score = player.getScoreboard().getOrCreateScore(ScoreHolder.fromName(player.getNameForScoreboard()), objective);
-                score.incrementScore();
-            }
-        });
     }
 }

@@ -8,11 +8,14 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.world.GameMode;
 
+import java.util.Objects;
+
 public class DeathHandler {
 
     private final DamageSource source;
     private final PlayerEntity player;
     private final PlayerData state;
+    private final StateSaverLoader serverState;
 
     public static void onPlayerDeath(LivingEntity entity, DamageSource source) {
         PlayerEntity player = (PlayerEntity) entity;
@@ -24,6 +27,7 @@ public class DeathHandler {
         this.player = player;
         this.source = source;
         this.state = StateSaverLoader.getPlayerState(player);
+        this.serverState = StateSaverLoader.getServerState(Objects.requireNonNull(player.getServer()));
     }
 
     public static void afterDeath(PlayerEntity player) {
@@ -34,6 +38,7 @@ public class DeathHandler {
             case 1:
                 SurvivorsAdvancements.grantAdvancement(player, SurvivorsAdvancements.DEATHS_KISS);
         }
+        SurvivorsAdvancements.checkGlobals(player.getServer());
     }
 
     public void onDeath() {
@@ -76,9 +81,13 @@ public class DeathHandler {
         PlayerEntity killer = (PlayerEntity) attacker;
         PlayerData killerState = StateSaverLoader.getPlayerState(killer);
 
-        SurvivorsAdvancements.grantAdvancement(killer, SurvivorsAdvancements.LIFESTEAL);
+        this.serverState.totalPlayersKilled += 1;
+        if ( this.serverState.totalPlayersKilled == 1 ) {
+            SurvivorsAdvancements.grantAdvancement(killer, SurvivorsAdvancements.FIRST_BLOOD);
+        }
 
         if(killerState.lives == 2 && this.state.lives >= 4 ) {
+            SurvivorsAdvancements.grantAdvancement(killer, SurvivorsAdvancements.LIFESTEAL);
             killerState.addLife(true);
             Scoreboards.updatePlayerTeam(killer, killerState);
             ServerPlayerEntity serverPlayer = (ServerPlayerEntity) killer;
@@ -87,10 +96,15 @@ public class DeathHandler {
         }
 
         if(killerState.lives == 1) {
+            SurvivorsAdvancements.grantAdvancement(killer, SurvivorsAdvancements.LIFESTEAL);
             killerState.addLife(true);
             Scoreboards.updatePlayerTeam(killer, killerState);
             ServerPlayerEntity serverPlayer = (ServerPlayerEntity) killer;
             serverPlayer.sendMessage(Text.literal("Congratulations. You have restored one life and are once more Yellow. You may now only target dark green lives."));
+        }
+
+        if (killerState.killCount == 5 ) {
+            SurvivorsAdvancements.grantAdvancement(killer, SurvivorsAdvancements.KILLSTREAK);
         }
     }
 }
