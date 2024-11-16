@@ -38,7 +38,6 @@ public class DeathHandler {
             case 1:
                 SurvivorsAdvancements.grantAdvancement(player, SurvivorsAdvancements.DEATHS_KISS);
         }
-        SurvivorsAdvancements.checkGlobals(player.getServer());
     }
 
     public void onDeath() {
@@ -57,6 +56,7 @@ public class DeathHandler {
         } else {
             sendDeathMessage();
         }
+        SurvivorsAdvancements.checkGlobals(this.player.getServer());
     }
 
     private void sendDeathMessage() {
@@ -75,6 +75,7 @@ public class DeathHandler {
         ServerPlayerEntity player = (ServerPlayerEntity)this.player;
         player.changeGameMode(GameMode.SPECTATOR);
         player.sendMessage(Text.literal("You have died for the last time. Your run has ended."));
+        serverState.playersEliminated += 1;
     }
 
     private void handleKiller( Entity attacker ) {
