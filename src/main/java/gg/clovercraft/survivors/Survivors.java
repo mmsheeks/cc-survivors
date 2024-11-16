@@ -35,9 +35,7 @@ public class Survivors implements ModInitializer {
 
         LOGGER.info("Setting up player events");
         // on join event
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-            StateSaverLoader.onPlayerJoin(handler);
-        });
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> StateSaverLoader.onPlayerJoin(handler));
 
         // on death event
         ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {

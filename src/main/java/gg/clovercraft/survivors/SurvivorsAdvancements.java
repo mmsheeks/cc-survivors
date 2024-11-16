@@ -42,7 +42,6 @@ public class SurvivorsAdvancements {
     }
 
     public static void checkGlobals(MinecraftServer server) {
-        SurvivorsAdvancements advancements = new SurvivorsAdvancements(server);
         StateSaverLoader state = StateSaverLoader.getServerState(server);
 
         int total = state.totalPlayers;
