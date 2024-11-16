@@ -1,0 +1,29 @@
+{
+  "parent": "survivors:getting_risky",
+  "display": {
+    "icon": {
+      "id": "minecraft:zombie_head"
+    },
+    "title": "Life Steal",
+    "description": "Regain life through death",
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:tick",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "predicate": {
+              "team": "survivors_adv_lifesteal"
+            },
+            "entity": "this"
+          }
+        ]
+      }
+    }
+  }
+}

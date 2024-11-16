@@ -37,10 +37,15 @@ public class DeathHandler {
         this.state.lives -= 1;
         Scoreboards.updatePlayerTeam(this.player, this.state);
 
-        if (this.state.lives == 0) {
-            endRun();
-        } else {
-            sendDeathMessage();
+        switch(this.state.lives) {
+            case 2:
+                SurvivorsAdvancements.grantAdvancement(this.player, SurvivorsAdvancements.GETTING_RISKY);
+            case 1:
+                SurvivorsAdvancements.grantAdvancement(this.player, SurvivorsAdvancements.DEATHS_KISS);
+            case 0:
+                endRun();
+            default:
+                sendDeathMessage();
         }
     }
 
@@ -65,6 +70,8 @@ public class DeathHandler {
     private void handleKiller( Entity attacker ) {
         PlayerEntity killer = (PlayerEntity) attacker;
         PlayerData killerState = StateSaverLoader.getPlayerState(killer);
+
+        SurvivorsAdvancements.grantAdvancement(killer, SurvivorsAdvancements.LIFESTEAL);
 
         if(killerState.lives == 2 && this.state.lives >= 4 ) {
             killerState.addLife(true);
