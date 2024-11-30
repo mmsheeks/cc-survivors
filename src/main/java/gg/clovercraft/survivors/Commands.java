@@ -28,6 +28,7 @@ public class Commands {
         lives();
         set_lives();
         give_life();
+        check_state();
     }
 
     public void lives() {
@@ -49,6 +50,29 @@ public class Commands {
                     }
                     return 1;
                 }));
+    }
+
+    public void check_state() {
+        dispatcher.register(CommandManager.literal("checkState")
+                .requires(source -> source.hasPermissionLevel(1))
+                .then(CommandManager.argument("value", StringArgumentType.string())
+                        .executes(Commands::checkServerState)));
+    }
+
+    public static int checkServerState(CommandContext<ServerCommandSource> context) {
+        String property = StringArgumentType.getString(context,"value");
+        MinecraftServer server = context.getSource().getServer();
+        assert server != null;
+        StateSaverLoader state = StateSaverLoader.getServerState(server);
+
+        int value = switch (property) {
+            case StateSaverLoader.TOTAL_PLAYERS -> state.totalPlayers;
+            case StateSaverLoader.PLAYERS_ELIMINATED -> state.playersEliminated;
+            default -> 0;
+        };
+        context.getSource().sendFeedback(() -> Text.literal("The value of %s is: %s".formatted(property, value)), false);
+
+        return 1;
     }
 
     public void set_lives() {
