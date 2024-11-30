@@ -35,6 +35,7 @@ public class DeathHandler {
         switch(state.lives) {
             case 2:
                 SurvivorsAdvancements.grantAdvancement(player, SurvivorsAdvancements.GETTING_RISKY);
+                break;
             case 1:
                 SurvivorsAdvancements.grantAdvancement(player, SurvivorsAdvancements.DEATHS_KISS);
         }
@@ -56,7 +57,6 @@ public class DeathHandler {
         } else {
             sendDeathMessage();
         }
-        SurvivorsAdvancements.checkGlobals(this.player.getServer());
     }
 
     private void sendDeathMessage() {

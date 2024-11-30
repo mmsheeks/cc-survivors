@@ -79,7 +79,7 @@ public class StateSaverLoader extends PersistentState {
         MinecraftServer server = handler.getPlayer().getServer();
         assert server != null;
         StateSaverLoader serverState = StateSaverLoader.getServerState(server);
-        int playerCount = server.getCurrentPlayerCount();
+        int playerCount = server.getCurrentPlayerCount() + 1;
         if ( playerCount > serverState.totalPlayers ) {
             serverState.totalPlayers = playerCount;
         }
